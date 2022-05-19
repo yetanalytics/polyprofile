@@ -48,6 +48,7 @@
       ?osrt (assoc :objectStatementRefTemplate ?osrt))))
 
 (defn generate-templates
+  "Generate a vector of templates, or `nil` if empty."
   [profile-num version-num {:keys [num-statement-templates] :as args}]
   (not-empty
    (mapv (fn [template-num]

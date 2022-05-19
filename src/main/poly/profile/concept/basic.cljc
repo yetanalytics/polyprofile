@@ -15,15 +15,39 @@
    num-vers
    num-concepts
    max-iris]
-  (let [id            (iri/create-iri prof-num ver-num concept-slug concept-num)
-        inscheme      (iri/create-iri prof-num ver-num)
-        ?broader      (iri/create-same-version-iri-vec prof-num concept-num concept-slug num-concepts num-vers max-iris)
-        ?narrower     (iri/create-same-version-iri-vec prof-num concept-num concept-slug num-concepts num-vers max-iris)
-        ?related      (iri/create-same-version-iri-vec prof-num concept-num concept-slug num-concepts num-vers max-iris)
-        ?broadMatch   (iri/create-diff-profile-iri-vec prof-num concept-slug num-profs num-concepts num-vers max-iris)
-        ?narrowMatch  (iri/create-diff-profile-iri-vec prof-num concept-slug num-profs num-concepts num-vers max-iris)
-        ?relatedMatch (iri/create-diff-version-iri-vec prof-num ver-num concept-slug num-profs num-concepts num-vers max-iris)
-        ?exactMatch   (iri/create-diff-version-iri-vec prof-num ver-num concept-slug num-profs num-concepts num-vers max-iris)]
+  (let [;; IRI functions (wrap in thunks for formatting)
+        create-same-ver-iris
+        #(iri/create-same-version-iri-vec prof-num
+                                          concept-num
+                                          concept-slug
+                                          num-concepts
+                                          num-vers
+                                          max-iris)
+        create-diff-prof-iris
+        #(iri/create-diff-profile-iri-vec prof-num
+                                          concept-slug
+                                          num-profs
+                                          num-concepts
+                                          num-vers
+                                          max-iris)
+        create-diff-ver-iris
+        #(iri/create-diff-version-iri-vec prof-num
+                                          ver-num
+                                          concept-slug
+                                          num-profs
+                                          num-concepts
+                                          num-vers
+                                          max-iris)
+        ;; Values
+        id             (iri/create-iri prof-num ver-num concept-slug concept-num)
+        inscheme       (iri/create-iri prof-num ver-num)
+        ?broader       (create-same-ver-iris)
+        ?narrower      (create-same-ver-iris)
+        ?related       (create-same-ver-iris)
+        ?broadMatch    (create-diff-prof-iris)
+        ?narrowMatch   (create-diff-prof-iris)
+        ?relatedMatch  (create-diff-ver-iris)
+        ?exactMatch    (create-diff-ver-iris)]
     (cond-> {:id         id
              :inScheme   inscheme
              :type       concept-type

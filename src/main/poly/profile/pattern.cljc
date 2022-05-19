@@ -99,6 +99,7 @@
      pat-kw      iris}))
 
 (defn generate-patterns
+  "Generate a vector of patterns, or `nil` if empty."
   [profile-num version-num {:keys [num-patterns] :as args}]
   (not-empty
    (mapv (fn [pattern-num]

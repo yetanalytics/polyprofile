@@ -19,7 +19,11 @@
   (let [id        (iri/create-iri prof-num ver-num concept-slug concept-num)
         inscheme  (iri/create-iri prof-num ver-num)
         ischema?  (= 0 (rand-nth [0 1]))
-        ?rec-iris (iri/create-iri-vec target-slug num-profiles num-versions num-targets max-iris)]
+        ?rec-iris (iri/create-iri-vec target-slug
+                                      num-profiles
+                                      num-versions
+                                      num-targets
+                                      max-iris)]
     (cond-> {:id         id
              :inScheme   inscheme
              :type       concept-type

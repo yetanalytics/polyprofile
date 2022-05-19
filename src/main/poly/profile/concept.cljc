@@ -9,6 +9,7 @@
    [poly.profile.utils.gen :refer [generate-object]]))
 
 (defn generate-concepts
+  "Generate a vector of concepts, or `nil` if empty."
   [profile-num version-num args]
   (->> (mapcat (fn [[num-kw concept-type]]
                  (if-some [num-concepts (get args num-kw)]
