@@ -6,15 +6,24 @@
 
 (defmethod generate-object "Activity"
   [prof-num
+   ver-num
    concept-num
    type-str
-   args]
-  (let [id         (format "http://poly.profile/profile-%d/activity-%d" prof-num concept-num)
-        inscheme   (format "http://poly.profile/profile-%d/v1" prof-num)
+   {:keys [num-profiles
+           num-versions
+           num-activity-types]}]
+  (let [id         (format "http://poly.profile/profile-%d/v%d/activity-%d"
+                           prof-num
+                           ver-num
+                           concept-num)
+        inscheme   (format "http://poly.profile/profile-%d/v%d"
+                           prof-num
+                           ver-num)
         ?atype-iri (first (iri/create-iri-vec "activity"
-                                              (:num-profiles args)
-                                              (:num-activity-types args)
-                                              (:max-iris args)))]
+                                              num-profiles
+                                              num-versions
+                                              num-activity-types
+                                              1))]
     (cond-> {:id                 id
              :inScheme           inscheme
              :type               type-str

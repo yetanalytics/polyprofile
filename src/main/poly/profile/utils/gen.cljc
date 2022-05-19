@@ -9,7 +9,8 @@
    and will include generated IRIs, whose generation will be determined by
    the current numerical IDs and the max numbers of profiles and objects."
   {:arglists '([prof-number
+                ver-number
                 obj-number
                 obj-type
                 args])}
-  (fn [_ _ obj-type _] obj-type))
+  (fn [_ _ _ obj-type _] obj-type))

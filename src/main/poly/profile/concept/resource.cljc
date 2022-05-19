@@ -5,12 +5,19 @@
 
 (defn- generate-resource-concept
   [prof-num
+   ver-num
    concept-num
    type-str
    type-slug
    type-desc]
-  (let [id             (format "http://poly.profile/profile-%d/%s-%d" prof-num type-slug concept-num)
-        inscheme       (format "http://poly.profile/profile-%d/v1" prof-num)
+  (let [id             (format "http://poly.profile/profile-%d/v%d/%s-%d"
+                               prof-num
+                               ver-num
+                               type-slug
+                               concept-num)
+        inscheme       (format "http://poly.profile/profile-%d/v%d"
+                               prof-num
+                               ver-num)
         inline-schema? (= 0 (rand-nth [0 1]))]
     (cond-> {:id          id
              :inScheme    inscheme
@@ -26,30 +33,36 @@
       (assoc :context "http://poly.profile/context"))))
 
 (defmethod generate-object "StateResource" [profile-num
+                                            ver-num
                                             state-res-num
                                             state-res-type
                                             _args]
   (generate-resource-concept profile-num
+                             ver-num
                              state-res-num
                              state-res-type
                              "state-resource"
                              "State Resource"))
 
 (defmethod generate-object "AgentProfileResource" [profile-num
+                                                   ver-num
                                                    agent-prof-res-num
                                                    agent-prof-res-type
                                                    _args]
   (generate-resource-concept profile-num
+                             ver-num
                              agent-prof-res-num
                              agent-prof-res-type
                              "agent-profile-resource"
                              "Agent Profile Resource"))
 
 (defmethod generate-object "ActivityProfileResource" [profile-num
+                                                      ver-num
                                                       activity-prof-res-num
                                                       activity-prof-res-type
                                                       _args]
   (generate-resource-concept profile-num
+                             ver-num
                              activity-prof-res-num
                              activity-prof-res-type
                              "activity-profile-resource"

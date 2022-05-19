@@ -9,11 +9,12 @@
    [poly.profile.utils.gen :refer [generate-object]]))
 
 (defn generate-concepts
-  [profile-num args]
+  [profile-num version-num args]
   (->> (mapcat (fn [[num-kw concept-type]]
                  (if-some [num-concepts (get args num-kw)]
                    (map (fn [concept-num]
                           (generate-object profile-num
+                                           version-num
                                            concept-num
                                            concept-type
                                            args))

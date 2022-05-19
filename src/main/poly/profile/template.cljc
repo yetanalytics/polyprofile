@@ -6,9 +6,11 @@
 
 (defmethod generate-object "StatementTemplate"
   [prof-num
+   ver-num
    template-num
    template-type
    {num-profs     :num-profiles
+    num-vers      :num-versions
     num-verbs     :num-verbs
     num-act-types :num-activity-types
     num-att-types :num-attachment-usage-types
@@ -18,18 +20,23 @@
         act-slug "activity-type"
         att-slug "attachment-usage-type"
         tmp-slug "template"
-        id       (format "http://poly.profile/profile-%d/template-%d" prof-num template-num)
-        inscheme (format "http://poly.profile/profile-%d/v1" prof-num)
-        ?verb    (first (iri/create-iri-vec vrb-slug num-profs num-verbs 1))
-        ?oat     (first (iri/create-iri-vec act-slug num-profs num-act-types 1))
-        ?ccat    (iri/create-iri-vec act-slug num-profs num-act-types max-iris)
-        ?cgat    (iri/create-iri-vec act-slug num-profs num-act-types max-iris)
-        ?cpat    (iri/create-iri-vec act-slug num-profs num-act-types max-iris)
-        ?coat    (iri/create-iri-vec act-slug num-profs num-act-types max-iris)
-        ?aut     (iri/create-iri-vec att-slug num-profs num-att-types max-iris)
-        ?csrt    (iri/create-iri-vec tmp-slug num-profs num-templates max-iris)
+        id       (format "http://poly.profile/profile-%d/v%d/template-%d"
+                         prof-num
+                         ver-num
+                         template-num)
+        inscheme (format "http://poly.profile/profile-%d/v%d"
+                         prof-num
+                         ver-num)
+        ?verb    (first (iri/create-iri-vec vrb-slug num-profs num-vers num-verbs 1))
+        ?oat     (first (iri/create-iri-vec act-slug num-profs num-vers num-act-types 1))
+        ?ccat    (iri/create-iri-vec act-slug num-profs num-vers num-act-types max-iris)
+        ?cgat    (iri/create-iri-vec act-slug num-profs num-vers num-act-types max-iris)
+        ?cpat    (iri/create-iri-vec act-slug num-profs num-vers num-act-types max-iris)
+        ?coat    (iri/create-iri-vec act-slug num-profs num-vers num-act-types max-iris)
+        ?aut     (iri/create-iri-vec att-slug num-profs num-vers num-att-types max-iris)
+        ?csrt    (iri/create-same-version-iri-vec prof-num ver-num template-num tmp-slug num-templates max-iris)
         ?osrt    (when-not ?oat
-                   (iri/create-iri-vec tmp-slug num-profs num-templates max-iris))]
+                   (iri/create-same-version-iri-vec prof-num ver-num template-num tmp-slug num-templates max-iris))]
     (cond-> {:id         id
              :inScheme   inscheme
              :type       template-type
@@ -46,10 +53,11 @@
       ?osrt (assoc :objectStatementRefTemplate ?osrt))))
 
 (defn generate-templates
-  [profile-num {:keys [num-statement-templates] :as args}]
+  [profile-num version-num {:keys [num-statement-templates] :as args}]
   (not-empty
    (mapv (fn [template-num]
            (generate-object profile-num
+                            version-num
                             template-num
                             "StatementTemplate"
                             args))

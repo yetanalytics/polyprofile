@@ -7,6 +7,7 @@
 
 (def default-args
   {:num-profiles                   10
+   :num-versions                   2
    :num-verbs                      5
    :num-activity-types             5
    :num-attachment-usage-types     2
@@ -20,11 +21,11 @@
    :max-iris                       5})
 
 (defn- generate-profile
-  [profile-num args]
+  [profile-num version-num args]
   (let [args*      (merge default-args args)
-        ?concepts  (generate-concepts profile-num args*)
-        ?templates (generate-templates profile-num args*)
-        ?patterns  (generate-patterns profile-num args*)]
+        ?concepts  (generate-concepts profile-num version-num args*)
+        ?templates (generate-templates profile-num version-num args*)
+        ?patterns  (generate-patterns profile-num version-num args*)]
     (cond-> {:id         (format "http://example.org/profile-%d/" profile-num)
              :type       "Profile"
              :_context   "https://w3id.org/xapi/profiles/context"
@@ -43,11 +44,12 @@
       ?patterns  (assoc :patterns ?patterns))))
 
 (defn generate-profile-seq
-  "Generate a lazy sequence of Profiles."
-  [{:keys [num-profiles]
-    :or   {num-profiles (:num-profiles default-args)}
-    :as   args}]
-  (let [args* (merge default-args args)]
-    (map (fn [profile-num]
-           (generate-profile profile-num args*))
-         (range num-profiles))))
+  "Generate a lazy sequence of Profiles. See `default-args` for allowed args."
+  [args]
+  (let [args* (merge default-args args)
+        {:keys [num-profiles num-versions]} args*]
+    (mapcat (fn [profile-num]
+              (map (fn [version-num]
+                     (generate-profile profile-num version-num args*))
+                   (range num-versions)))
+            (range num-profiles))))

@@ -6,18 +6,26 @@
 
 (defn- generate-extension-concept
   [prof-num
+   ver-num
    concept-num
    concept-type
    concept-slug
    concept-desc
    num-profiles
+   num-versions
    num-targets
    target-slug
    max-iris]
-  (let [id             (format "http://poly.profile/profile-%d/%s-%d" prof-num concept-slug concept-num)
-        inscheme       (format "http://poly.profile/profile-%d/v1" prof-num)
+  (let [id (format "http://poly.profile/profile-%d/v%d/%s-%d"
+                   prof-num
+                   ver-num
+                   concept-slug
+                   concept-num)
+        inscheme (format "http://poly.profile/profile-%d/v%d"
+                         prof-num
+                         ver-num)
         inline-schema? (= 0 (rand-nth [0 1]))
-        ?rec-iris      (iri/create-iri-vec target-slug num-profiles num-targets max-iris)]
+        ?rec-iris      (iri/create-iri-vec target-slug num-profiles num-versions num-targets max-iris)]
     (cond-> {:id         id
              :inScheme   inscheme
              :type       concept-type
@@ -37,49 +45,61 @@
       (assoc :recommendedVerbs ?rec-iris))))
 
 (defmethod generate-object "ActivityExtension" [profile-num
+                                                ver-num
                                                 activity-ext-num
                                                 activity-ext-type
                                                 {:keys [num-profiles
+                                                        num-versions
                                                         num-activity-types
                                                         max-iris]}]
   (generate-extension-concept profile-num
+                              ver-num
                               activity-ext-num
                               activity-ext-type
                               "activity-extension"
                               "Activity Extension"
                               num-profiles
+                              num-versions
                               num-activity-types
                               "activity-type"
                               max-iris))
 
 (defmethod generate-object "ContextExtension" [profile-num
+                                               ver-num
                                                context-ext-num
                                                context-ext-type
                                                {:keys [num-profiles
+                                                       num-versions
                                                        num-verbs
                                                        max-iris]}]
   (generate-extension-concept profile-num
+                              ver-num
                               context-ext-num
                               context-ext-type
                               "context-extension"
                               "Context Extension"
                               num-profiles
+                              num-versions
                               num-verbs
                               "verb"
                               max-iris))
 
 (defmethod generate-object "ResultExtension" [profile-num
+                                              ver-num
                                               result-ext-num
                                               result-ext-type
                                               {:keys [num-profiles
+                                                      num-versions
                                                       num-verbs
                                                       max-iris]}]
   (generate-extension-concept profile-num
+                              ver-num
                               result-ext-num
                               result-ext-type
                               "result-extension"
                               "Result Extension"
                               num-profiles
+                              num-versions
                               num-verbs
                               "verb"
                               max-iris))
