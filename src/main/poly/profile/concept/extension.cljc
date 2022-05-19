@@ -5,26 +5,24 @@
                        [goog.string.format]])))
 
 (defn- generate-extension-concept
-  [{prof-num     :profile-number
-    concept-num  :component-number
-    num-targets  :num-targets
-    type-str     :component-type
-    type-slug    :component-slug
-    type-desc    :component-desc
-    tgt-slug     :target-slug
-    :as args}]
-  (let [args*          (assoc args
-                              :num-components num-targets
-                              :component-slug tgt-slug)
-        id             (format "http://example.org/profile-%d/%s-%d" prof-num type-slug concept-num)
+  [prof-num
+   concept-num
+   concept-type
+   concept-slug
+   concept-desc
+   num-profiles
+   num-targets
+   target-slug
+   max-iris]
+  (let [id             (format "http://example.org/profile-%d/%s-%d" prof-num concept-slug concept-num)
         inscheme       (format "http://example.org/profile-%d/v1" prof-num)
         inline-schema? (= 0 (rand-nth [0 1]))
-        ?rec-iris      (iri/create-iri-vec args*)]
+        ?rec-iris      (iri/create-iri-vec target-slug num-profiles num-targets max-iris)]
     (cond-> {:id         id
              :inScheme   inscheme
-             :type       type-str
-             :prefLabel  {:en-US (format "%s %d" type-desc concept-num)}
-             :definition {:en-US (format "%s Number %d" type-desc concept-num)}}
+             :type       concept-type
+             :prefLabel  {:en-US (format "%s %d" concept-desc concept-num)}
+             :definition {:en-US (format "%s Number %d" concept-desc concept-num)}}
       inline-schema?
       (assoc :inlineSchema "{\"type\": \"number\"}")
       (not inline-schema?)
@@ -32,29 +30,56 @@
       (= 0 (rand-nth [0 1]))
       (assoc :context "http://example.org/context")
       (and ?rec-iris
-           (= "activity-type" tgt-slug))
+           (= "activity-type" target-slug))
       (assoc :recommendedActivityTypes ?rec-iris)
       (and ?rec-iris
-           (= "verb" tgt-slug))
+           (= "verb" target-slug))
       (assoc :recommendedVerbs ?rec-iris))))
 
-(defmethod generate-object "ActivityExtension" [args]
-  (generate-extension-concept (assoc args
-                                     :num-targets (:num-activity-types args)
-                                     :component-slug "activity-extension"
-                                     :component-desc "Activity Extension"
-                                     :target-slug "activity-type")))
+(defmethod generate-object "ActivityExtension" [profile-num
+                                                activity-ext-num
+                                                activity-ext-type
+                                                {:keys [num-profiles
+                                                        num-activity-types
+                                                        max-iris]}]
+  (generate-extension-concept profile-num
+                              activity-ext-num
+                              activity-ext-type
+                              "activity-extension"
+                              "Activity Extension"
+                              num-profiles
+                              num-activity-types
+                              "activity-type"
+                              max-iris))
 
-(defmethod generate-object "ContextExtension" [args]
-  (generate-extension-concept (assoc args
-                                     :num-targets (:num-verbs args)
-                                     :component-slug "context-extension"
-                                     :component-desc "Context Extension"
-                                     :target-slug "verb")))
+(defmethod generate-object "ContextExtension" [profile-num
+                                               context-ext-num
+                                               context-ext-type
+                                               {:keys [num-profiles
+                                                       num-verbs
+                                                       max-iris]}]
+  (generate-extension-concept profile-num
+                              context-ext-num
+                              context-ext-type
+                              "context-extension"
+                              "Context Extension"
+                              num-profiles
+                              num-verbs
+                              "verb"
+                              max-iris))
 
-(defmethod generate-object "ResultExtension" [args]
-  (generate-extension-concept (assoc args
-                                     :num-targets (:num-verbs args)
-                                     :component-slug "result-extension"
-                                     :component-desc "Result Extension"
-                                     :target-slug "verb")))
+(defmethod generate-object "ResultExtension" [profile-num
+                                              result-ext-num
+                                              result-ext-type
+                                              {:keys [num-profiles
+                                                      num-verbs
+                                                      max-iris]}]
+  (generate-extension-concept profile-num
+                              result-ext-num
+                              result-ext-type
+                              "result-extension"
+                              "Result Extension"
+                              num-profiles
+                              num-verbs
+                              "verb"
+                              max-iris))

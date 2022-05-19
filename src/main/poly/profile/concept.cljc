@@ -1,14 +1,22 @@
 (ns poly.profile.concept
-  (:require [poly.profile.utils.gen :refer [generate-object]]))
+  (:require
+   ;; Need to ensure that the concept namespaces are loaded for multi-method
+   ;; to dispatch properly
+   [poly.profile.concept.activity]
+   [poly.profile.concept.basic]
+   [poly.profile.concept.extension]
+   [poly.profile.concept.resource]
+   [poly.profile.utils.gen :refer [generate-object]]))
 
 (defn generate-concepts
-  [args]
+  [profile-num args]
   (->> (mapcat (fn [[num-kw concept-type]]
                  (if-some [num-concepts (get args num-kw)]
-                   (map (fn [idx]
-                          (generate-object (assoc args
-                                                  :component-number idx
-                                                  :component-type concept-type)))
+                   (map (fn [concept-num]
+                          (generate-object profile-num
+                                           concept-num
+                                           concept-type
+                                           args))
                         (range num-concepts))
                    '()))
                [[:num-verbs "Verb"]

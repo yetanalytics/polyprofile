@@ -5,26 +5,28 @@
                        [goog.string.format]])))
 
 (defn- generate-basic-concept
-  [{prof-num     :profile-number
-    concept-num  :component-number
-    type-str     :component-type
-    type-slug    :component-slug
-    type-desc    :component-desc
-    :as args}]
-  (let [id            (format "http://example.org/profile-%d/%s-%d" prof-num type-slug concept-num)
+  [prof-num
+   concept-num
+   concept-type
+   concept-slug
+   concept-desc
+   num-profs
+   num-concepts
+   max-iris]
+  (let [id            (format "http://example.org/profile-%d/%s-%d" prof-num concept-slug concept-num)
         inscheme      (format "http://example.org/profile-%d/v1" prof-num)
-        ?broader      (iri/create-same-prof-iri-vec args)
-        ?narrower     (iri/create-same-prof-iri-vec args)
-        ?related      (iri/create-same-prof-iri-vec args)
-        ?broadMatch   (iri/create-diff-prof-iri-vec args)
-        ?narrowMatch  (iri/create-diff-prof-iri-vec args)
-        ?relatedMatch (iri/create-diff-prof-iri-vec args)
-        ?exactMatch   (iri/create-diff-prof-iri-vec args)]
+        ?broader      (iri/create-same-prof-iri-vec prof-num concept-num concept-slug num-concepts max-iris)
+        ?narrower     (iri/create-same-prof-iri-vec prof-num concept-num concept-slug num-concepts max-iris)
+        ?related      (iri/create-same-prof-iri-vec prof-num concept-num concept-slug num-concepts max-iris)
+        ?broadMatch   (iri/create-diff-prof-iri-vec prof-num concept-slug num-profs num-concepts max-iris)
+        ?narrowMatch  (iri/create-diff-prof-iri-vec prof-num concept-slug num-profs num-concepts max-iris)
+        ?relatedMatch (iri/create-diff-prof-iri-vec prof-num concept-slug num-profs num-concepts max-iris)
+        ?exactMatch   (iri/create-diff-prof-iri-vec prof-num concept-slug num-profs num-concepts max-iris)]
     (cond-> {:id         id
              :inScheme   inscheme
-             :type       type-str
-             :prefLabel  {:en-US (format "%s %d" type-desc concept-num)}
-             :definition {:en-US (format "%s Number %d" type-desc concept-num)}}
+             :type       concept-type
+             :prefLabel  {:en-US (format "%s %d" concept-desc concept-num)}
+             :definition {:en-US (format "%s Number %d" concept-desc concept-num)}}
       (not-empty ?broader)
       (assoc :broader ?broader)
       (not-empty ?narrower)
@@ -41,20 +43,48 @@
       (not-empty ?exactMatch)
       (assoc :exactMatch ?exactMatch))))
 
-(defmethod generate-object "Verb" [args]
-  (generate-basic-concept (assoc args
-                                 :num-components (:num-verbs args)
-                                 :component-slug "verb"
-                                 :component-desc "Verb")))
+(defmethod generate-object "Verb" [prof-num
+                                   verb-num
+                                   verb-type
+                                   {:keys [num-profiles
+                                           num-verbs
+                                           max-iris]}]
+  (generate-basic-concept prof-num
+                          verb-num
+                          verb-type
+                          "verb"
+                          "Verb"
+                          num-profiles
+                          num-verbs
+                          max-iris))
 
-(defmethod generate-object "ActivityType" [args]
-  (generate-basic-concept (assoc args
-                                 :num-components (:num-activity-types args)
-                                 :component-slug "activity-type"
-                                 :component-desc "Activity Type")))
+(defmethod generate-object "ActivityType" [prof-num
+                                           activity-type-num
+                                           activity-type-type
+                                           {:keys [num-profiles
+                                                   num-activity-types
+                                                   max-iris]}]
+  (generate-basic-concept prof-num
+                          activity-type-num
+                          activity-type-type
+                          "activity-type"
+                          "Activity Type"
+                          num-profiles
+                          num-activity-types
+                          max-iris))
 
-(defmethod generate-object "AttachmentUsageType" [args]
-  (generate-basic-concept (assoc args
-                                 :num-components (:num-attachment-usage-types args)
-                                 :component-slug "attachment-usage-type"
-                                 :component-desc "Attachment Usage Type")))
+(defmethod generate-object "AttachmentUsageType"
+  [prof-num
+   attachment-usage-type-num
+   attachment-usage-type-type
+   {:keys [num-profiles
+           num-attachment-usage-types
+           max-iris]}]
+  (generate-basic-concept prof-num
+                          attachment-usage-type-num
+                          attachment-usage-type-type
+                          "attachment-usage-type"
+                          "Attachment Usage Type"
+                          num-profiles
+                          num-attachment-usage-types
+                          max-iris))

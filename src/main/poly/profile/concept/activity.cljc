@@ -5,17 +5,16 @@
               [goog.string.format]])))
 
 (defmethod generate-object "Activity"
-  [{prof-num    :profile-number
-    concept-num :component-number
-    atype-num   :num-activity-types
-    type-str    :component-type
-    :as         args}]
-  (let [args*      (assoc args
-                          :num-components atype-num
-                          :component-slug "activity-type")
-        id         (format "http://example.org/profile-%d/activity-%d" prof-num concept-num)
+  [prof-num
+   concept-num
+   type-str
+   args]
+  (let [id         (format "http://example.org/profile-%d/activity-%d" prof-num concept-num)
         inscheme   (format "http://example.org/profile-%d/v1" prof-num)
-        ?atype-iri (first (iri/create-iri-vec args*))]
+        ?atype-iri (first (iri/create-iri-vec "activity"
+                                              (:num-profiles args)
+                                              (:num-activity-types args)
+                                              (:max-iris args)))]
     (cond-> {:id                 id
              :inScheme           inscheme
              :type               type-str

@@ -20,18 +20,18 @@
    :max-iris                       5})
 
 (defn- generate-profile
-  [{prof-num :profile-number
-    :as      args}]
-  (let [?concepts  (generate-concepts args)
-        ?templates (generate-templates args)
-        ?patterns  (generate-patterns args)]
-    (cond-> {:id         (format "http://example.org/profile-%d/" prof-num)
+  [profile-num args]
+  (let [args*      (merge default-args args)
+        ?concepts  (generate-concepts profile-num args*)
+        ?templates (generate-templates profile-num args*)
+        ?patterns  (generate-patterns profile-num args*)]
+    (cond-> {:id         (format "http://example.org/profile-%d/" profile-num)
              :type       "Profile"
              :_context   "https://w3id.org/xapi/profiles/context"
              :conformsTo "https://w3id.org/xapi/profiles#1.0"
-             :prefLabel  {:en-US (str "Profile " prof-num)}
-             :definition {:en-US (str "Generated Profile Number " prof-num)}
-             :versions   [{:id              (format "http://example.org/profile-%d/v1" prof-num)
+             :prefLabel  {:en-US (str "Profile " profile-num)}
+             :definition {:en-US (str "Generated Profile Number " profile-num)}
+             :versions   [{:id              (format "http://example.org/profile-%d/v1" profile-num)
                            :generatedAtTime #?(:clj (let [inst  (java.time.Instant/now)
                                                           nanos (.getNano inst)]
                                                       (.toString (.minusNanos inst nanos)))
@@ -45,7 +45,9 @@
 (defn generate-profile-seq
   "Generate a lazy sequence of Profiles."
   [{:keys [num-profiles]
-    :as args}]
+    :or   {num-profiles (:num-profiles default-args)}
+    :as   args}]
   (let [args* (merge default-args args)]
-    (map (fn [prof-num] (generate-profile (assoc args* :profile-number prof-num)))
+    (map (fn [profile-num]
+           (generate-profile profile-num args*))
          (range num-profiles))))

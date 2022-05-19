@@ -4,11 +4,11 @@
                        [goog.string.format]])))
 
 (defn- generate-resource-concept
-  [{prof-num    :profile-number
-    concept-num :component-number
-    type-str    :component-type
-    type-slug   :component-slug
-    type-desc   :component-desc}]
+  [prof-num
+   concept-num
+   type-str
+   type-slug
+   type-desc]
   (let [id             (format "http://example.org/profile-%d/%s-%d" prof-num type-slug concept-num)
         inscheme       (format "http://example.org/profile-%d/v1" prof-num)
         inline-schema? (= 0 (rand-nth [0 1]))]
@@ -25,17 +25,32 @@
       (= 0 (rand-nth [0 1]))
       (assoc :context "http://example.org/context"))))
 
-(defmethod generate-object "StateResource" [args]
-  (generate-resource-concept (assoc args
-                                    :component-slug "state-resource"
-                                    :component-desc "State Resource")))
+(defmethod generate-object "StateResource" [profile-num
+                                            state-res-num
+                                            state-res-type
+                                            _args]
+  (generate-resource-concept profile-num
+                             state-res-num
+                             state-res-type
+                             "state-resource"
+                             "State Resource"))
 
-(defmethod generate-object "AgentProfileResource" [args]
-  (generate-resource-concept (assoc args
-                                    :component-slug "agent-profile-resource"
-                                    :component-desc "Agent Profile Resource")))
+(defmethod generate-object "AgentProfileResource" [profile-num
+                                                   agent-prof-res-num
+                                                   agent-prof-res-type
+                                                   _args]
+  (generate-resource-concept profile-num
+                             agent-prof-res-num
+                             agent-prof-res-type
+                             "agent-profile-resource"
+                             "Agent Profile Resource"))
 
-(defmethod generate-object "ActivityProfileResource" [args]
-  (generate-resource-concept (assoc args
-                                    :component-slug "activity-profile-resource"
-                                    :component-desc "Activity Profile Resource")))
+(defmethod generate-object "ActivityProfileResource" [profile-num
+                                                      activity-prof-res-num
+                                                      activity-prof-res-type
+                                                      _args]
+  (generate-resource-concept profile-num
+                             activity-prof-res-num
+                             activity-prof-res-type
+                             "activity-profile-resource"
+                             "Activity Profile Resource"))
