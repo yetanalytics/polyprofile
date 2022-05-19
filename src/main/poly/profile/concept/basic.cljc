@@ -15,21 +15,15 @@
    num-vers
    num-concepts
    max-iris]
-  (let [id            (format "http://poly.profile/profile-%d/v%d/%s-%d"
-                              prof-num
-                              ver-num
-                              concept-slug
-                              concept-num)
-        inscheme      (format "http://poly.profile/profile-%d/v%d"
-                              prof-num
-                              ver-num)
+  (let [id            (iri/create-iri prof-num ver-num concept-slug concept-num)
+        inscheme      (iri/create-iri prof-num ver-num)
         ?broader      (iri/create-same-version-iri-vec prof-num concept-num concept-slug num-concepts num-vers max-iris)
         ?narrower     (iri/create-same-version-iri-vec prof-num concept-num concept-slug num-concepts num-vers max-iris)
         ?related      (iri/create-same-version-iri-vec prof-num concept-num concept-slug num-concepts num-vers max-iris)
-        ?broadMatch   (iri/create-diff-prof-iri-vec prof-num concept-slug num-profs num-concepts num-vers max-iris)
-        ?narrowMatch  (iri/create-diff-prof-iri-vec prof-num concept-slug num-profs num-concepts num-vers max-iris)
-        ?relatedMatch (iri/create-diff-prof-iri-vec prof-num concept-slug num-profs num-concepts num-vers max-iris)
-        ?exactMatch   (iri/create-diff-prof-iri-vec prof-num concept-slug num-profs num-concepts num-vers max-iris)]
+        ?broadMatch   (iri/create-diff-profile-iri-vec prof-num concept-slug num-profs num-concepts num-vers max-iris)
+        ?narrowMatch  (iri/create-diff-profile-iri-vec prof-num concept-slug num-profs num-concepts num-vers max-iris)
+        ?relatedMatch (iri/create-diff-version-iri-vec prof-num ver-num concept-slug num-profs num-concepts num-vers max-iris)
+        ?exactMatch   (iri/create-diff-version-iri-vec prof-num ver-num concept-slug num-profs num-concepts num-vers max-iris)]
     (cond-> {:id         id
              :inScheme   inscheme
              :type       concept-type

@@ -20,13 +20,8 @@
         act-slug "activity-type"
         att-slug "attachment-usage-type"
         tmp-slug "template"
-        id       (format "http://poly.profile/profile-%d/v%d/template-%d"
-                         prof-num
-                         ver-num
-                         template-num)
-        inscheme (format "http://poly.profile/profile-%d/v%d"
-                         prof-num
-                         ver-num)
+        id       (iri/create-iri prof-num ver-num "template" template-num)
+        inscheme (iri/create-iri prof-num ver-num)
         ?verb    (first (iri/create-iri-vec vrb-slug num-profs num-vers num-verbs 1))
         ?oat     (first (iri/create-iri-vec act-slug num-profs num-vers num-act-types 1))
         ?ccat    (iri/create-iri-vec act-slug num-profs num-vers num-act-types max-iris)

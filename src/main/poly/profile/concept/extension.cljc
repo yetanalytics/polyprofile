@@ -16,24 +16,18 @@
    num-targets
    target-slug
    max-iris]
-  (let [id (format "http://poly.profile/profile-%d/v%d/%s-%d"
-                   prof-num
-                   ver-num
-                   concept-slug
-                   concept-num)
-        inscheme (format "http://poly.profile/profile-%d/v%d"
-                         prof-num
-                         ver-num)
-        inline-schema? (= 0 (rand-nth [0 1]))
-        ?rec-iris      (iri/create-iri-vec target-slug num-profiles num-versions num-targets max-iris)]
+  (let [id        (iri/create-iri prof-num ver-num concept-slug concept-num)
+        inscheme  (iri/create-iri prof-num ver-num)
+        ischema?  (= 0 (rand-nth [0 1]))
+        ?rec-iris (iri/create-iri-vec target-slug num-profiles num-versions num-targets max-iris)]
     (cond-> {:id         id
              :inScheme   inscheme
              :type       concept-type
              :prefLabel  {:en-US (format "%s %d" concept-desc concept-num)}
              :definition {:en-US (format "%s Number %d" concept-desc concept-num)}}
-      inline-schema?
+      ischema?
       (assoc :inlineSchema "{\"type\": \"number\"}")
-      (not inline-schema?)
+      (not ischema?)
       (assoc :schema "http://poly.profile/schema")
       (= 0 (rand-nth [0 1]))
       (assoc :context "http://poly.profile/context")

@@ -1,5 +1,6 @@
 (ns poly.profile.concept.resource
   (:require [poly.profile.utils.gen :refer [generate-object]]
+            [poly.profile.utils.iri :as iri]
             #?@(:cljs [[goog.string :refer [format]]
                        [goog.string.format]])))
 
@@ -10,24 +11,18 @@
    type-str
    type-slug
    type-desc]
-  (let [id             (format "http://poly.profile/profile-%d/v%d/%s-%d"
-                               prof-num
-                               ver-num
-                               type-slug
-                               concept-num)
-        inscheme       (format "http://poly.profile/profile-%d/v%d"
-                               prof-num
-                               ver-num)
-        inline-schema? (= 0 (rand-nth [0 1]))]
+  (let [id       (iri/create-iri prof-num ver-num type-slug concept-num)
+        inscheme (iri/create-iri prof-num ver-num)
+        ischema? (= 0 (rand-nth [0 1]))]
     (cond-> {:id          id
              :inScheme    inscheme
              :type        type-str
              :prefLabel   {:en-US (format "%s %d" type-desc concept-num)}
              :definition  {:en-US (format "%s Number %d" type-desc concept-num)}
              :contentType "application/json"}
-      inline-schema?
+      ischema?
       (assoc :inlineSchema "{\"type\": \"number\"}")
-      (not inline-schema?)
+      (not ischema?)
       (assoc :schema "http://poly.profile/schema")
       (= 0 (rand-nth [0 1]))
       (assoc :context "http://poly.profile/context"))))

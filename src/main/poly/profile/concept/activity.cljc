@@ -12,13 +12,8 @@
    {:keys [num-profiles
            num-versions
            num-activity-types]}]
-  (let [id         (format "http://poly.profile/profile-%d/v%d/activity-%d"
-                           prof-num
-                           ver-num
-                           concept-num)
-        inscheme   (format "http://poly.profile/profile-%d/v%d"
-                           prof-num
-                           ver-num)
+  (let [id         (iri/create-iri prof-num ver-num "activity" concept-num)
+        inscheme   (iri/create-iri prof-num ver-num)
         ?atype-iri (first (iri/create-iri-vec "activity"
                                               num-profiles
                                               num-versions

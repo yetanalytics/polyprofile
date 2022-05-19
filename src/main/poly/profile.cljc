@@ -1,7 +1,8 @@
 (ns poly.profile
-  (:require [poly.profile.concept  :refer [generate-concepts]]
-            [poly.profile.template :refer [generate-templates]]
-            [poly.profile.pattern  :refer [generate-patterns]]
+  (:require [poly.profile.concept   :refer [generate-concepts]]
+            [poly.profile.template  :refer [generate-templates]]
+            [poly.profile.pattern   :refer [generate-patterns]]
+            [poly.profile.utils.iri :as iri]
             #?@(:cljs [[goog.string :refer [format]]
                        [goog.string.format]])))
 
@@ -26,7 +27,7 @@
         ?concepts  (generate-concepts profile-num version-num args*)
         ?templates (generate-templates profile-num version-num args*)
         ?patterns  (generate-patterns profile-num version-num args*)]
-    (cond-> {:id         (format "http://example.org/profile-%d/" profile-num)
+    (cond-> {:id         (iri/create-iri profile-num)
              :type       "Profile"
              :_context   "https://w3id.org/xapi/profiles/context"
              :conformsTo "https://w3id.org/xapi/profiles#1.0"
