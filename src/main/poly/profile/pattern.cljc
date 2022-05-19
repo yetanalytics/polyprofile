@@ -51,8 +51,8 @@
     num-pats  :num-patterns
     num-temps :num-statement-templates
     max-iris  :max-iris}]
-  (let [id       (format "http://example.org/profile-%d/pattern-%d" prof-num pattern-num)
-        inscheme (format "http://example.org/profile-%d/v1" prof-num)
+  (let [id       (format "http://poly.profile/profile-%d/pattern-%d" prof-num pattern-num)
+        inscheme (format "http://poly.profile/profile-%d/v1" prof-num)
         pat-kw   (rand-nth [:sequence :alternates :optional :oneOrMore :zeroOrMore])
         iris     (condp #(contains? %1 %2) pat-kw
                    #{:optional :oneOrMore :zeroOrMore}

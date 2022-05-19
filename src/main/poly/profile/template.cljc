@@ -18,8 +18,8 @@
         act-slug "activity-type"
         att-slug "attachment-usage-type"
         tmp-slug "template"
-        id       (format "http://example.org/profile-%d/template-%d" prof-num template-num)
-        inscheme (format "http://example.org/profile-%d/v1" prof-num)
+        id       (format "http://poly.profile/profile-%d/template-%d" prof-num template-num)
+        inscheme (format "http://poly.profile/profile-%d/v1" prof-num)
         ?verb    (first (iri/create-iri-vec vrb-slug num-profs num-verbs 1))
         ?oat     (first (iri/create-iri-vec act-slug num-profs num-act-types 1))
         ?ccat    (iri/create-iri-vec act-slug num-profs num-act-types max-iris)

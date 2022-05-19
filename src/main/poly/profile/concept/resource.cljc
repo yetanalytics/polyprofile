@@ -9,8 +9,8 @@
    type-str
    type-slug
    type-desc]
-  (let [id             (format "http://example.org/profile-%d/%s-%d" prof-num type-slug concept-num)
-        inscheme       (format "http://example.org/profile-%d/v1" prof-num)
+  (let [id             (format "http://poly.profile/profile-%d/%s-%d" prof-num type-slug concept-num)
+        inscheme       (format "http://poly.profile/profile-%d/v1" prof-num)
         inline-schema? (= 0 (rand-nth [0 1]))]
     (cond-> {:id          id
              :inScheme    inscheme
@@ -21,9 +21,9 @@
       inline-schema?
       (assoc :inlineSchema "{\"type\": \"number\"}")
       (not inline-schema?)
-      (assoc :schema "http://example.org/schema")
+      (assoc :schema "http://poly.profile/schema")
       (= 0 (rand-nth [0 1]))
-      (assoc :context "http://example.org/context"))))
+      (assoc :context "http://poly.profile/context"))))
 
 (defmethod generate-object "StateResource" [profile-num
                                             state-res-num

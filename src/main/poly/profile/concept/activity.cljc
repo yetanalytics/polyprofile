@@ -9,8 +9,8 @@
    concept-num
    type-str
    args]
-  (let [id         (format "http://example.org/profile-%d/activity-%d" prof-num concept-num)
-        inscheme   (format "http://example.org/profile-%d/v1" prof-num)
+  (let [id         (format "http://poly.profile/profile-%d/activity-%d" prof-num concept-num)
+        inscheme   (format "http://poly.profile/profile-%d/v1" prof-num)
         ?atype-iri (first (iri/create-iri-vec "activity"
                                               (:num-profiles args)
                                               (:num-activity-types args)

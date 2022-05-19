@@ -13,8 +13,8 @@
    num-profs
    num-concepts
    max-iris]
-  (let [id            (format "http://example.org/profile-%d/%s-%d" prof-num concept-slug concept-num)
-        inscheme      (format "http://example.org/profile-%d/v1" prof-num)
+  (let [id            (format "http://pol'y.profile/profile-%d/%s-%d" prof-num concept-slug concept-num)
+        inscheme      (format "http://poly.profile/profile-%d/v1" prof-num)
         ?broader      (iri/create-same-prof-iri-vec prof-num concept-num concept-slug num-concepts max-iris)
         ?narrower     (iri/create-same-prof-iri-vec prof-num concept-num concept-slug num-concepts max-iris)
         ?related      (iri/create-same-prof-iri-vec prof-num concept-num concept-slug num-concepts max-iris)

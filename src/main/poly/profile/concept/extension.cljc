@@ -14,8 +14,8 @@
    num-targets
    target-slug
    max-iris]
-  (let [id             (format "http://example.org/profile-%d/%s-%d" prof-num concept-slug concept-num)
-        inscheme       (format "http://example.org/profile-%d/v1" prof-num)
+  (let [id             (format "http://poly.profile/profile-%d/%s-%d" prof-num concept-slug concept-num)
+        inscheme       (format "http://poly.profile/profile-%d/v1" prof-num)
         inline-schema? (= 0 (rand-nth [0 1]))
         ?rec-iris      (iri/create-iri-vec target-slug num-profiles num-targets max-iris)]
     (cond-> {:id         id
@@ -26,9 +26,9 @@
       inline-schema?
       (assoc :inlineSchema "{\"type\": \"number\"}")
       (not inline-schema?)
-      (assoc :schema "http://example.org/schema")
+      (assoc :schema "http://poly.profile/schema")
       (= 0 (rand-nth [0 1]))
-      (assoc :context "http://example.org/context")
+      (assoc :context "http://poly.profile/context")
       (and ?rec-iris
            (= "activity-type" target-slug))
       (assoc :recommendedActivityTypes ?rec-iris)
