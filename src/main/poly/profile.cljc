@@ -11,10 +11,12 @@
    :num-verbs                      5
    :num-activity-types             5
    :num-attachment-usage-types     2
-   :num-activity-extensions        1
-   :num-context-extensions         1
-   :num-result-extensions          1
-   :num-activity-profile-resources 1
+   :num-activity-extensions        0
+   :num-context-extensions         0
+   :num-result-extensions          0
+   :num-state-resources            0
+   :num-activity-profile-resources 0
+   :num-agent-profile-resources    0
    :num-activities                 1
    :num-statement-templates        5
    :num-patterns                   5
