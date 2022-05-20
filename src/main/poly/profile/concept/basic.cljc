@@ -18,25 +18,25 @@
   (let [;; IRI functions (wrap in thunks for formatting)
         create-same-ver-iris
         #(iri/create-same-version-iri-vec prof-num
+                                          ver-num
                                           concept-num
                                           concept-slug
                                           num-concepts
-                                          num-vers
                                           max-iris)
         create-diff-prof-iris
         #(iri/create-diff-profile-iri-vec prof-num
                                           concept-slug
                                           num-profs
-                                          num-concepts
                                           num-vers
+                                          num-concepts
                                           max-iris)
         create-diff-ver-iris
         #(iri/create-diff-version-iri-vec prof-num
                                           ver-num
                                           concept-slug
                                           num-profs
-                                          num-concepts
                                           num-vers
+                                          num-concepts
                                           max-iris)
         ;; Values
         id             (iri/create-iri prof-num ver-num concept-slug concept-num)

@@ -77,5 +77,17 @@
              (count prof-lazy-seq)))
       (is (-> prof-lazy-seq
               vec
-              pan/validate-profile-coll
+              ;; Don't set `:relations?` to true (despite being fairly
+              ;; important) since polyprofile doesn't account for specialized
+              ;; Pattern relation specs
+              (pan/validate-profile-coll :syntax? true
+                                         :ids? true
+                                         :context? true)
               nil?)))))
+
+(comment
+  (def prof-seq (vec (poly/generate-profile-seq {:num-profiles 2})))
+  (pan/validate-profile-coll prof-seq
+                             :syntax? false
+                             :relations? true
+                             :result :print))
