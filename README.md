@@ -20,7 +20,7 @@ Options not provided in the arg map use the values of `default-args`. The follow
 | `:num-state-resources` | The number of State Resources per Profile. | `0` |
 | `:num-activity-profile-resources` | The number of Activity Profile Resources per Profile. | `0` |
 | `:num-agent-profile-resources` | The number of Agent Profile Resources per Profile. | `0` |
-| `:num-activities` | The number of Activities per Profile. | `51 |
+| `:num-activities` | The number of Activities per Profile. | `5` |
 | `:num-statement-templates` | The number of Statement Templates per Profile. | `5` |
 | `:num-patterns` | The number of Patterns per Profile. | `5` |
 | `:max-iris` | The maximum number of IRIs that can be generated in a single IRI array (e.g. for `broader` and `narrower`). | `5` |
