@@ -80,6 +80,9 @@
               ;; Don't set `:relations?` to true (despite being fairly
               ;; important) since polyprofile doesn't account for specialized
               ;; Pattern relation specs
+
+              ;; TODO: Ensure that all Pattern relation specs are followed
+              ;; (and fix any Pan bugs while at it).
               (pan/validate-profile-coll :syntax? true
                                          :ids? true
                                          :context? true)
