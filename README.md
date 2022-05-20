@@ -4,7 +4,7 @@ xAPI Profile generation library
 
 ## API
 
-The API has a single function: `generate-profile-seq`, which takes a single arg map and generates a lazy seq of xAPI Profiles whose IRI properties (e.g. `broader`, `narrower`,) are guaranteed to relate to other Profile objects in that seq.
+The API has a single function: `generate-profile-seq`, which takes a single arg map and generates a lazy seq of xAPI Profiles whose IRI properties (e.g. `broader`, `narrower`) are guaranteed to relate to other Profile objects in that seq.
 
 Options not provided in the arg map use the values of `default-args`. The following is a list of valid args:
 | Arg | Description | Default |
