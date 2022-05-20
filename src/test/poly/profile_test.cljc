@@ -69,9 +69,12 @@
 
 (deftest profile-gen-test
   (testing "Generate a seq of profiles"
-    (let [prof-lazy-seq (poly/generate-profile-seq {})]
-      #?(:clj (is (instance? clojure.lang.LazySeq prof-lazy-seq))
-         :cljs (is (instance? cljs.core/LazySeq prof-lazy-seq)))
+    (let [prof-lazy-seq (poly/generate-profile-seq)]
+      (is (instance? #?(:clj clojure.lang.LazySeq
+                        :cljs cljs.core/LazySeq)
+                     prof-lazy-seq))
+      (is (= (:num-profiles poly/default-args)
+             (count prof-lazy-seq)))
       (is (-> prof-lazy-seq
               vec
               pan/validate-profile-coll
