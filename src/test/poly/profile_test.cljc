@@ -83,7 +83,29 @@
               (pan/validate-profile-coll :syntax? true
                                          :ids? true
                                          :context? true)
-              nil?)))))
+              nil?))))
+  (testing "Generate a seq of empty profiles"
+    (let [prof-lazy-seq (poly/generate-profile-seq {:num-verbs 0
+                                                    :num-activity-types 0
+                                                    :num-attachment-usage-types 0
+                                                    :num-activities 0
+                                                    :num-statement-templates 0
+                                                    :num-patterns 0})
+          empty-prof    (first prof-lazy-seq)]
+      (is (= (:num-profiles poly/default-args)
+             (count prof-lazy-seq)))
+      (is (not (contains? empty-prof :concepts)))
+      (is (not (contains? empty-prof :templates)))
+      (is (not (contains? empty-prof :patterns)))))
+  (testing "Generate an seq of profiles with no versions"
+    (let [empty-prof (first (poly/generate-profile-seq {:num-profiles 1
+                                                        :num-versions 0}))]
+      (is (not (contains? empty-prof :concepts)))
+      (is (not (contains? empty-prof :templates)))
+      (is (not (contains? empty-prof :patterns)))))
+  (testing "Generate an empty seq of profiles"
+    (let [empty-seq (poly/generate-profile-seq {:num-profiles 0})]
+      (is (empty? empty-seq)))))
 
 (comment
   (def prof-seq (vec (poly/generate-profile-seq {:num-profiles 2})))
