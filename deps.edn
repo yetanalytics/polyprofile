@@ -13,7 +13,7 @@
                            {:git/tag "v0.5.1"
                             :git/sha "dfb30dd"}
                            com.yetanalytics/project-pan
-                           {:git/url "git@github.com:yetanalytics/project-pan.git"
+                           {:git/url "https://github.com/yetanalytics/project-pan.git"
                             :git/sha "e2fdba72210dbb97a9fbaa6bc3ed65d7c6657e9c"
                             :exclusions [org.clojure/clojure
                                          org.clojure/clojurescript]}}}
