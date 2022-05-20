@@ -15,3 +15,4 @@ pom.xml.asc
 .calva/
 .clj-kondo/
 .cljs_node_repl/
+.lsp/
