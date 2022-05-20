@@ -45,7 +45,7 @@
                 :name "Yet Analytics"}
    :versions   (generate-version-vector profile-num num-versions)})
 
-(defn- generate-version-objects
+(defn- generate-objects-per-version
   "Generate the `concepts`, `templates`, and `patterns` vectors of a
    single Profile version."
   [profile-num version-num args]
@@ -56,14 +56,14 @@
      :templates templates
      :patterns  patterns}))
 
-(defn- generate-profile-objects
+(defn- generate-objects-per-profile
   "Generate the `concepts`, `templates`, and `patterns` vectors of a
    single Profile."
   [profile-num {:keys [num-versions] :as args}]
   (let [{:keys [concepts templates patterns]}
         (->> (range num-versions)
              (map (fn [ver-num]
-                    (generate-version-objects profile-num ver-num args)))
+                    (generate-objects-per-version profile-num ver-num args)))
              (reduce (partial merge-with concat) {}))]
     (cond-> {}
       (not-empty concepts)
@@ -77,7 +77,7 @@
   "Generate a single Profile."
   [profile-num args]
   (merge (generate-profile-info profile-num args)
-         (generate-profile-objects profile-num args)))
+         (generate-objects-per-profile profile-num args)))
 
 (defn generate-profile-seq
   "Generate a lazy sequence of Profiles. See `default-args` for allowed args;
