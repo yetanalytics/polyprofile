@@ -1,11 +1,7 @@
 {:paths ["src/main"]
  :deps
  {org.clojure/clojure       {:mvn/version "1.11.1"}
-  org.clojure/clojurescript {:mvn/version "1.11.54"}
-  com.yetanalytics/project-pan {:git/url "git@github.com:yetanalytics/project-pan.git"
-                                :git/sha "e2fdba72210dbb97a9fbaa6bc3ed65d7c6657e9c"
-                                :exclusions [org.clojure/clojure
-                                             org.clojure/clojurescript]}}
+  org.clojure/clojurescript {:mvn/version "1.11.54"}}
  :aliases
  {:test     {:extra-paths ["src/test"]
              :extra-deps  {org.clojure/test.check {:mvn/version "1.1.1"}
@@ -15,7 +11,12 @@
                             :exclusions [org.clojure/clojurescript]}
                            io.github.cognitect-labs/test-runner
                            {:git/tag "v0.5.1"
-                            :git/sha "dfb30dd"}}}
+                            :git/sha "dfb30dd"}
+                           com.yetanalytics/project-pan
+                           {:git/url "git@github.com:yetanalytics/project-pan.git"
+                            :git/sha "e2fdba72210dbb97a9fbaa6bc3ed65d7c6657e9c"
+                            :exclusions [org.clojure/clojure
+                                         org.clojure/clojurescript]}}}
   :run-clj  {:exec-fn   cognitect.test-runner.api/test
              :exec-args {:dirs ["src/test"]}}
   :run-cljs {;; -X is not supported here yet
