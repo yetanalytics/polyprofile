@@ -1,12 +1,12 @@
-(ns poly.profile.concept
+(ns com.yetanalytics.poly.profile.concept
   (:require
    ;; Need to ensure that the concept namespaces are loaded for multi-method
    ;; to dispatch properly
-   [poly.profile.concept.activity]
-   [poly.profile.concept.basic]
-   [poly.profile.concept.extension]
-   [poly.profile.concept.resource]
-   [poly.profile.utils.gen :refer [generate-object]]))
+   [com.yetanalytics.poly.profile.concept.activity]
+   [com.yetanalytics.poly.profile.concept.basic]
+   [com.yetanalytics.poly.profile.concept.extension]
+   [com.yetanalytics.poly.profile.concept.resource]
+   [com.yetanalytics.poly.profile.utils.gen :refer [generate-object]]))
 
 (defn generate-concepts
   "Generate a vector of concepts, or `nil` if empty."

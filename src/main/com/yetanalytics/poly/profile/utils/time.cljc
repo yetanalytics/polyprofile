@@ -1,4 +1,4 @@
-(ns poly.profile.utils.time
+(ns com.yetanalytics.poly.profile.utils.time
   #?(:clj (:import [java.time Instant]
                    [java.time.temporal ChronoUnit])))
 

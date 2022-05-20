@@ -1,8 +1,8 @@
-(ns poly.profile.concept.activity
-  (:require [poly.profile.utils.gen :refer [generate-object]]
-            [poly.profile.utils.iri :as iri]
+(ns com.yetanalytics.poly.profile.concept.activity
+  (:require [com.yetanalytics.poly.profile.utils.gen :refer [generate-object]]
+            [com.yetanalytics.poly.profile.utils.iri :as iri]
             #?@(:cljs [[goog.string :refer [format]]
-              [goog.string.format]])))
+                       [goog.string.format]])))
 
 (defmethod generate-object "Activity"
   [prof-num

@@ -1,6 +1,6 @@
-(ns poly.profile.concept.extension
-  (:require [poly.profile.utils.gen :refer [generate-object]]
-            [poly.profile.utils.iri :as iri]
+(ns com.yetanalytics.poly.profile.concept.extension
+  (:require [com.yetanalytics.poly.profile.utils.gen :refer [generate-object]]
+            [com.yetanalytics.poly.profile.utils.iri :as iri]
             #?@(:cljs [[goog.string :refer [format]]
                        [goog.string.format]])))
 

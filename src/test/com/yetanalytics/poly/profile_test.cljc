@@ -1,8 +1,8 @@
-(ns poly.profile-test
+(ns com.yetanalytics.poly.profile-test
   (:require [clojure.test :refer [deftest testing is]]
             [com.yetanalytics.pan :as pan]
-            [poly.profile :as poly]
-            [poly.profile.utils.gen :refer [generate-object]]))
+            [com.yetanalytics.poly.profile :as poly]
+            [com.yetanalytics.poly.profile.utils.gen :refer [generate-object]]))
 
 (deftest object-gen-test
   (testing "Generate a single"

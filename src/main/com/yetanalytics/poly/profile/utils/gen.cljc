@@ -1,4 +1,4 @@
-(ns poly.profile.utils.gen)
+(ns com.yetanalytics.poly.profile.utils.gen)
 
 (defmulti generate-object
   "Generate a single object, e.g. a Concept, StatementTemplate, or Pattern.

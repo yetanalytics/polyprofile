@@ -1,9 +1,9 @@
-(ns poly.profile
-  (:require [poly.profile.concept    :refer [generate-concepts]]
-            [poly.profile.template   :refer [generate-templates]]
-            [poly.profile.pattern    :refer [generate-patterns]]
-            [poly.profile.utils.iri  :as iri]
-            [poly.profile.utils.time :as t]))
+(ns com.yetanalytics.poly.profile
+  (:require [com.yetanalytics.poly.profile.concept    :refer [generate-concepts]]
+            [com.yetanalytics.poly.profile.template   :refer [generate-templates]]
+            [com.yetanalytics.poly.profile.pattern    :refer [generate-patterns]]
+            [com.yetanalytics.poly.profile.utils.iri  :as iri]
+            [com.yetanalytics.poly.profile.utils.time :as t]))
 
 (def default-args
   {:num-profiles                   10

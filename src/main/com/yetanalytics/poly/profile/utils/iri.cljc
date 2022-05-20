@@ -1,4 +1,4 @@
-(ns poly.profile.utils.iri
+(ns com.yetanalytics.poly.profile.utils.iri
   #?(:cljs (:require [goog.string :refer [format]]
                      [goog.string.format])))
 
