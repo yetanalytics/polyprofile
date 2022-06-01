@@ -85,7 +85,9 @@
               ;; (and fix any Pan bugs while at it).
               (pan/validate-profile-coll :syntax? true
                                          :ids? true
-                                         :context? true)
+                                         :context? true
+                                        ;;  :relations? true
+                                         )
               nil?))))
   (testing "Generate a seq of empty profiles"
     (let [prof-lazy-seq (poly/generate-profile-seq {:num-verbs 0
@@ -109,10 +111,3 @@
   (testing "Generate an empty seq of profiles"
     (let [empty-seq (poly/generate-profile-seq {:num-profiles 0})]
       (is (empty? empty-seq)))))
-
-(comment
-  (def prof-seq (vec (poly/generate-profile-seq {:num-profiles 2})))
-  (pan/validate-profile-coll prof-seq
-                             :syntax? false
-                             :relations? true
-                             :result :print))
