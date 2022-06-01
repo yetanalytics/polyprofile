@@ -5,7 +5,13 @@
             #?@(:cljs [[goog.string :refer [format]]
                        [goog.string.format]])))
 
+;; Templates can be any Profile from the cosmos, but sub-Patterns can only
+;; be from the same Profile version, in order to allow for easy lazy Profile
+;; generation.
+
 (defn update-transitive-closure
+  "Given a `trans-closure` map between Pattern IDs and their ancestors,
+   compute the updated map given `pattern-id` and its `sub-pattern-ids`."
   [trans-closure pattern-id sub-pattern-ids]
   (let [ancestor-ids (-> trans-closure
                          (get pattern-id)
@@ -19,14 +25,33 @@
             (conj sub-pattern-ids pattern-id))))
 
 (comment
-  (-> {}
-      (update-transitive-closure 0 #{1 2})
-      (update-transitive-closure 1 #{3})
-      (update-transitive-closure 2 #{3}))
+  ;; Examples of tracking transitive closures
 
-  (update-transitive-closure {}
-                             0
-                             #{1}))
+  ;; Add 0 --> 1 and 0 --> 2
+  (= {0 #{0}
+      1 #{0 1}
+      2 #{0 2}}
+     (-> {}
+         (update-transitive-closure 0 #{1 2})))
+  
+  ;; Add 1 --> 3; 3 gets 1's ancestors
+  (= {0 #{0}
+      1 #{0 1}
+      2 #{0 2}
+      3 #{0 1 3}}
+     (-> {}
+         (update-transitive-closure 0 #{1 2})
+         (update-transitive-closure 1 #{3})))
+
+  ;; Add 2 --> 3; 3 gets 2's (as well as 1's) ancestors
+  (= {0 #{0}
+      1 #{0 1}
+      2 #{0 2}
+      3 #{0 1 2 3}}
+     (-> {}
+         (update-transitive-closure 0 #{1 2})
+         (update-transitive-closure 1 #{3})
+         (update-transitive-closure 2 #{3}))))
 
 (defn- init-scalar-pattern
   [pattern-base
@@ -58,16 +83,22 @@
                                         2)))
 
 (defn- add-patterns
-  [pattern-vec
+  "Add a single Pattern DAG to `pattern-coll` by designating a random Pattern
+   to be the primary pattern. Sub-patterns are then added in a BFS fashion,
+   avoiding self-loops by tracking the transitive closure of child-parent
+   Pattern relations.
+   
+   NOTE: Will throw an exception if `pattern-coll` is empty."
+  [pattern-coll
    prof-num
    ver-num
    num-patterns
    max-iris]
-  (let [{fst-pat-id :id :as first-pattern} (rand-nth pattern-vec)]
+  (let [{fst-pat-id :id :as first-pattern} (rand-nth pattern-coll)]
     (loop [patterns [(assoc first-pattern :primary true)]
            updated-pats (-> (reduce (fn [m pat] (assoc m (:id pat) pat))
                                     {}
-                                    pattern-vec)
+                                    pattern-coll)
                             (update fst-pat-id assoc :primary true))
            trans-close {fst-pat-id #{fst-pat-id}}]
       (if-some [{pat-id :id :as pattern} (first patterns)]
@@ -138,6 +169,7 @@
                      trans-close))))
         (vec (vals updated-pats))))))
 
+;; Initial Patterns only contain Templates.
 (defmethod generate-object "Pattern"
   [prof-num
    ver-num
@@ -172,20 +204,21 @@
                     :max-iris 5}))
 
 (defn generate-patterns
+  "Generate a vector of templates, or `nil` if empty."
   [profile-num version-num {:keys [num-patterns max-iris] :as args}]
-  (let [patterns  (map (fn [pattern-num]
-                         (generate-object profile-num
-                                          version-num
-                                          pattern-num
-                                          "Pattern"
-                                          args))
-                       (range num-patterns))
-        patterns*  (add-patterns patterns
-                                 profile-num
-                                 version-num
-                                 num-patterns
-                                 max-iris)]
-    patterns*))
+  (let [pattern-bases (map (fn [pattern-num]
+                             (generate-object profile-num
+                                              version-num
+                                              pattern-num
+                                              "Pattern"
+                                              args))
+                           (range num-patterns))]
+    (when (not-empty pattern-bases)
+      (add-patterns pattern-bases
+                    profile-num
+                    version-num
+                    num-patterns
+                    max-iris))))
 
 (comment
   (generate-patterns
