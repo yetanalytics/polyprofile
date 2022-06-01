@@ -84,9 +84,8 @@
 
 (defn- add-patterns
   "Add a single Pattern DAG to `pattern-coll` by designating a random Pattern
-   to be the primary pattern. Sub-patterns are then added in a BFS fashion,
-   avoiding self-loops by tracking the transitive closure of child-parent
-   Pattern relations.
+   to be the primary pattern. Sub-patterns are then added in a DFS fashion,
+   avoiding self-loops by tracking the ancestors of the visited Pattern.
    
    NOTE: Will throw an exception if `pattern-coll` is empty."
   [pattern-coll
@@ -95,13 +94,13 @@
    num-patterns
    max-iris]
   (let [{fst-pat-id :id :as first-pattern} (rand-nth pattern-coll)]
-    (loop [patterns [(assoc first-pattern :primary true)]
+    (loop [patterns (list (assoc first-pattern :primary true))
            updated-pats (-> (reduce (fn [m pat] (assoc m (:id pat) pat))
                                     {}
                                     pattern-coll)
                             (update fst-pat-id assoc :primary true))
            trans-close {fst-pat-id #{fst-pat-id}}]
-      (if-some [{pat-id :id :as pattern} (first patterns)]
+      (if-some [{pat-id :id :as pattern} (peek patterns)]
         (let [tclose (get trans-close pat-id)]
           (cond
             (contains? pattern :sequence)
@@ -118,8 +117,9 @@
                                (take max-iris)
                                vec)
                   new-pat (assoc pattern :sequence seq-all)]
-              (recur (concat (rest patterns)
-                             (map (partial get updated-pats) seq-pats))
+              (recur (apply conj
+                            (pop patterns)
+                            (map (partial get updated-pats) seq-pats))
                      (assoc updated-pats pat-id new-pat)
                      (update-transitive-closure trans-close pat-id seq-pats)))
             (contains? pattern :alternates)
@@ -141,8 +141,9 @@
                                (take max-iris)
                                vec)
                   new-pat (assoc pattern :alternates alt-all)]
-              (recur (concat (rest patterns)
-                             (map (partial get updated-pats) alt-pats))
+              (recur (apply conj
+                            (pop patterns)
+                            (map (partial get updated-pats) alt-pats))
                      (assoc updated-pats pat-id new-pat)
                      (update-transitive-closure trans-close pat-id alt-pats)))
             :else ; optional, oneOrMore, zeroOrMore
@@ -160,7 +161,7 @@
                                 keys
                                 first)
                     new-pat (assoc pattern pat-kw iri)]
-                (recur (conj (rest patterns)
+                (recur (conj (pop patterns)
                              (get updated-pats iri))
                        (assoc updated-pats pat-id new-pat)
                        (update-transitive-closure trans-close pat-id #{iri})))
