@@ -14,7 +14,7 @@
                             :git/sha "dfb30dd"}
                            com.yetanalytics/project-pan
                            {:git/url "https://github.com/yetanalytics/project-pan.git"
-                            :git/sha "7a4493ddee76cb333385bef67928ff14ba7973a3"
+                            :git/sha "8faf3da17b082fe7f9c4b02321278ee81b721409"
                             :exclusions [org.clojure/clojure
                                          org.clojure/clojurescript]}}}
   :run-clj  {:exec-fn   cognitect.test-runner.api/test
