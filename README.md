@@ -24,3 +24,5 @@ Options not provided in the arg map use the values of `default-args`. The follow
 | `:num-statement-templates` | The number of Statement Templates per Profile. | `5` |
 | `:num-patterns` | The number of Patterns per Profile. | `5` |
 | `:max-iris` | The maximum number of IRIs that can be generated in a single IRI array (e.g. for `broader` and `narrower`). | `5` |
+
+All IRIs will point to other IRIs in the Profile cosmos to the extent specified by the xAPI Profile spec; the exception is with Patterns, which only point to sub-Patterns in the same Profile version (though they can point to any Template in the cosmos).

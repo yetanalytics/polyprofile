@@ -34,21 +34,21 @@
    IRI that contains all three of these values is never returned, in order to
    prevent self-loops."
   ([object-slug num-profiles num-versions num-objects max-iris]
-   (let [num-iris  (rand-int (inc max-iris))
+   (let [num-iris (rand-int (inc max-iris))
          num-pairs (->> (repeatedly num-iris (fn [] [(rand-int num-profiles)
                                                      (rand-int num-versions)
                                                      (rand-int num-objects)]))
                         distinct)
-         iri-coll  (map (fn [[pnum vnum onum]]
-                          (format "http://poly.profile/profile-%d/v%d/%s-%d"
-                                  pnum
-                                  vnum
-                                  object-slug
-                                  onum))
-                        num-pairs)]
+         iri-coll (map (fn [[pnum vnum onum]]
+                         (format "http://poly.profile/profile-%d/v%d/%s-%d"
+                                 pnum
+                                 vnum
+                                 object-slug
+                                 onum))
+                       num-pairs)]
      (->> iri-coll vec not-empty)))
   ([profile-num version-num object-num object-slug num-profiles num-versions num-objects max-iris]
-   (let [num-iris  (rand-int (inc max-iris))
+   (let [num-iris (rand-int (inc max-iris))
          num-pairs (->> (repeatedly num-iris (fn [] [(rand-int num-profiles)
                                                      (rand-int num-versions)
                                                      (rand-int num-objects)]))
@@ -57,14 +57,35 @@
                                       (not= version-num vnum)
                                       (not= object-num onum))))
                         distinct)
-         iri-coll  (map (fn [[pnum vnum onum]]
-                          (format "http://poly.profile/profile-%d/v%d/%s-%d"
-                                  pnum
-                                  vnum
-                                  object-slug
-                                  onum))
-                        num-pairs)]
+         iri-coll (map (fn [[pnum vnum onum]]
+                         (format "http://poly.profile/profile-%d/v%d/%s-%d"
+                                 pnum
+                                 vnum
+                                 object-slug
+                                 onum))
+                       num-pairs)]
      (->> iri-coll vec not-empty))))
+
+;; Used for Patterns, which require `min-iris` and in general do not care about
+;; IRI distinctiveness.
+(defn create-nondistinct-iri-vec
+  "Similar to `create-iri-vec`, but with two differences:
+   - A `min-iris` arg is required to set the minimum number of IRIs in the coll.
+   - Repeated IRIs are not removed."
+  [object-slug num-profiles num-versions num-objects min-iris max-iris]
+  (let [num-iris  (+ min-iris (rand-int (- (inc max-iris) min-iris)))
+        num-pairs (repeatedly num-iris (fn [] [(rand-int num-profiles)
+                                               (rand-int num-versions)
+                                               (rand-int num-objects)]))
+
+        iri-coll  (map (fn [[pnum vnum onum]]
+                         (format "http://poly.profile/profile-%d/v%d/%s-%d"
+                                 pnum
+                                 vnum
+                                 object-slug
+                                 onum))
+                       num-pairs)]
+    (->> iri-coll vec not-empty)))
 
 (defn create-same-version-iri-vec
   "Create a vector of IRIs (with length limited by `max-iris`) of the form
