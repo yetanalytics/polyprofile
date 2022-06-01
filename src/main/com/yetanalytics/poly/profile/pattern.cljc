@@ -9,11 +9,12 @@
 ;; be from the same Profile version, in order to allow for easy lazy Profile
 ;; generation.
 
-(defn update-transitive-closure
-  "Given a `trans-closure` map between Pattern IDs and their ancestors,
-   compute the updated map given `pattern-id` and its `sub-pattern-ids`."
-  [trans-closure pattern-id sub-pattern-ids]
-  (let [ancestor-ids (-> trans-closure
+(defn update-ancestors-map
+  "Given a `ancestors-map` between Pattern IDs and their ancestors (including
+   themselves), compute the updated map given `pattern-id` and its
+   `sub-pattern-ids`."
+  [ancestors-map pattern-id sub-pattern-ids]
+  (let [ancestor-ids (-> ancestors-map
                          (get pattern-id)
                          (conj pattern-id)
                          set)]
@@ -21,18 +22,18 @@
               (if (contains? m sub-pat-id)
                 (update m sub-pat-id cset/union ancestor-ids)
                 (assoc m sub-pat-id (conj ancestor-ids sub-pat-id))))
-            trans-closure
+            ancestors-map
             (conj sub-pattern-ids pattern-id))))
 
 (comment
-  ;; Examples of tracking transitive closures
+  ;; Examples of tracking ancestors/transitive closures
 
   ;; Add 0 --> 1 and 0 --> 2
   (= {0 #{0}
       1 #{0 1}
       2 #{0 2}}
      (-> {}
-         (update-transitive-closure 0 #{1 2})))
+         (update-ancestors-map 0 #{1 2})))
   
   ;; Add 1 --> 3; 3 gets 1's ancestors
   (= {0 #{0}
@@ -40,8 +41,8 @@
       2 #{0 2}
       3 #{0 1 3}}
      (-> {}
-         (update-transitive-closure 0 #{1 2})
-         (update-transitive-closure 1 #{3})))
+         (update-ancestors-map 0 #{1 2})
+         (update-ancestors-map 1 #{3})))
 
   ;; Add 2 --> 3; 3 gets 2's (as well as 1's) ancestors
   (= {0 #{0}
@@ -49,9 +50,9 @@
       2 #{0 2}
       3 #{0 1 2 3}}
      (-> {}
-         (update-transitive-closure 0 #{1 2})
-         (update-transitive-closure 1 #{3})
-         (update-transitive-closure 2 #{3}))))
+         (update-ancestors-map 0 #{1 2})
+         (update-ancestors-map 1 #{3})
+         (update-ancestors-map 2 #{3}))))
 
 (defn- init-scalar-pattern
   [pattern-base
@@ -94,80 +95,89 @@
    num-patterns
    max-iris]
   (let [{fst-pat-id :id :as first-pattern} (rand-nth pattern-coll)]
-    (loop [patterns (list (assoc first-pattern :primary true))
+    (loop [patterns     (list (assoc first-pattern :primary true))
            updated-pats (-> (reduce (fn [m pat] (assoc m (:id pat) pat))
                                     {}
                                     pattern-coll)
                             (update fst-pat-id assoc :primary true))
-           trans-close {fst-pat-id #{fst-pat-id}}]
+           ancestors-m  {fst-pat-id #{fst-pat-id}}]
       (if-some [{pat-id :id :as pattern} (peek patterns)]
-        (let [tclose (get trans-close pat-id)]
+        (let [tclose (get ancestors-m pat-id)]
           (cond
             (contains? pattern :sequence)
-            (let [seq-pats (->> (iri/create-same-version-iri-vec prof-num
-                                                                 ver-num
-                                                                 -1
-                                                                 "pattern"
-                                                                 num-patterns
-                                                                 max-iris)
-                                (filter #(not (contains? tclose %))))
-                  seq-all (->> seq-pats
-                               (concat (:sequence pattern))
-                               shuffle
-                               (take max-iris)
-                               vec)
-                  new-pat (assoc pattern :sequence seq-all)]
+            (let [;; We can pass -1 as the pattern number since self-looping
+                  ;; IRIs will be excluded later on
+                  seq-pats
+                  (->> (iri/create-same-version-iri-vec prof-num
+                                                        ver-num
+                                                        -1
+                                                        "pattern"
+                                                        num-patterns
+                                                        max-iris)
+                       (filter #(not (contains? tclose %))))
+                  seq-all
+                  (->> seq-pats
+                       (concat (:sequence pattern))
+                       shuffle
+                       (take max-iris)
+                       vec)
+                  new-pat
+                  (assoc pattern :sequence seq-all)]
               (recur (apply conj
                             (pop patterns)
                             (map (partial get updated-pats) seq-pats))
                      (assoc updated-pats pat-id new-pat)
-                     (update-transitive-closure trans-close pat-id seq-pats)))
+                     (update-ancestors-map ancestors-m pat-id seq-pats)))
             (contains? pattern :alternates)
-            (let [alt-pats (->> (iri/create-same-version-iri-vec prof-num
-                                                                 ver-num
-                                                                 -1
-                                                                 "pattern"
-                                                                 num-patterns
-                                                                 max-iris)
-                                (filter (fn [sub-pat-id]
-                                          (not (contains? tclose sub-pat-id))))
-                                (filter (fn [sub-pat-id]
-                                          (let [sub-pat (get updated-pats sub-pat-id)]
-                                            (not (or (contains? sub-pat :optional)
-                                                     (contains? sub-pat :zeroOrMore)))))))
-                  alt-all (->> alt-pats
-                               (concat (:alternates pattern))
-                               shuffle
-                               (take max-iris)
-                               vec)
-                  new-pat (assoc pattern :alternates alt-all)]
+            (let [alt-pats
+                  (->> (iri/create-same-version-iri-vec prof-num
+                                                        ver-num
+                                                        -1
+                                                        "pattern"
+                                                        num-patterns
+                                                        max-iris)
+                       (filter (fn [sub-pat-id]
+                                 (not (contains? tclose sub-pat-id))))
+                       (filter (fn [sub-pat-id]
+                                 (let [sub (get updated-pats sub-pat-id)]
+                                   (not (or (contains? sub :optional)
+                                            (contains? sub :zeroOrMore)))))))
+                  alt-all
+                  (->> alt-pats
+                       (concat (:alternates pattern))
+                       shuffle
+                       (take max-iris)
+                       vec)
+                  new-pat
+                  (assoc pattern :alternates alt-all)]
               (recur (apply conj
                             (pop patterns)
                             (map (partial get updated-pats) alt-pats))
                      (assoc updated-pats pat-id new-pat)
-                     (update-transitive-closure trans-close pat-id alt-pats)))
+                     (update-ancestors-map ancestors-m pat-id alt-pats)))
             :else ; optional, oneOrMore, zeroOrMore
-            (if-some [iri (->> (iri/create-same-version-iri-vec prof-num
-                                                                ver-num
-                                                                -1
-                                                                "pattern"
-                                                                num-patterns
-                                                                1)
-                               (filter (fn [sub-pat-id]
-                                         (not (contains? tclose sub-pat-id))))
-                               first)]
+            (if-some [sub-pat-id
+                      (->> (iri/create-same-version-iri-vec prof-num
+                                                            ver-num
+                                                            -1
+                                                            "pattern"
+                                                            num-patterns
+                                                            1)
+                           (filter (fn [sub-pat-id]
+                                     (not (contains? tclose sub-pat-id))))
+                           first)]
               (let [pat-kw  (-> pattern
                                 (select-keys [:optional :oneOrMore :zeroOrMore])
                                 keys
                                 first)
-                    new-pat (assoc pattern pat-kw iri)]
+                    new-pat (assoc pattern pat-kw sub-pat-id)]
                 (recur (conj (pop patterns)
-                             (get updated-pats iri))
+                             (get updated-pats sub-pat-id))
                        (assoc updated-pats pat-id new-pat)
-                       (update-transitive-closure trans-close pat-id #{iri})))
+                       (update-ancestors-map ancestors-m pat-id #{sub-pat-id})))
               (recur (rest patterns)
                      updated-pats
-                     trans-close))))
+                     ancestors-m))))
         (vec (vals updated-pats))))))
 
 ;; Initial Patterns only contain Templates.
@@ -194,16 +204,6 @@
       #{:sequence :alternates}
       (init-coll-pattern pat-base pat-kw num-profs num-vers num-temps max-iris))))
 
-(comment
-  (generate-object 0
-                   0
-                   0
-                   "Pattern"
-                   {:num-profiles 2
-                    :num-versions 2
-                    :num-statement-templates 2
-                    :max-iris 5}))
-
 (defn generate-patterns
   "Generate a vector of templates, or `nil` if empty."
   [profile-num version-num {:keys [num-patterns max-iris] :as args}]
@@ -220,13 +220,3 @@
                     version-num
                     num-patterns
                     max-iris))))
-
-(comment
-  (generate-patterns
-   0
-   0
-   {:num-profiles 2
-    :num-versions 2
-    :num-statement-templates 10
-    :num-patterns 10
-    :max-iris 5}))

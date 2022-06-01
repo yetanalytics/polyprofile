@@ -66,6 +66,8 @@
                        num-pairs)]
      (->> iri-coll vec not-empty))))
 
+;; Used for Patterns, which require `min-iris` and in general do not care about
+;; IRI distinctiveness.
 (defn create-nondistinct-iri-vec
   "Similar to `create-iri-vec`, but with two differences:
    - A `min-iris` arg is required to set the minimum number of IRIs in the coll.
