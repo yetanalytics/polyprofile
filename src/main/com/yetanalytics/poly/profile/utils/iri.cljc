@@ -23,19 +23,9 @@
            object-slug
            object-num)))
 
-(defn create-iri-vec
-  "Create a vector of IRIs (with length limited by `max-iris`) of the form
-   ```
-   http://poly.profile/profile-[pnum]/v[vnum]/[object-slug]-[onum]
-   ```
-   where `pnum`, `vnum`, `onum` have min value 0 (inclusive) and max value
-   `num-profiles`, `num-versions`, and `num-objects` (exclusive), respectively.
-   If `profile-num`, `version-num,` and `object-num` are provided, then the
-   IRI that contains all three of these values is never returned, in order to
-   prevent self-loops."
-  ([object-slug num-profiles num-versions num-objects max-iris]
-   (let [num-iris  (rand-int (inc max-iris))
-         num-pairs (->> (repeatedly num-iris (fn [] [(rand-int num-profiles)
+(defn- create-iri-vec*
+  ([object-slug num-profiles num-versions num-objects num-iris]
+   (let [num-pairs (->> (repeatedly num-iris (fn [] [(rand-int num-profiles)
                                                      (rand-int num-versions)
                                                      (rand-int num-objects)]))
                         distinct)
@@ -47,9 +37,8 @@
                                   onum))
                         num-pairs)]
      (->> iri-coll vec not-empty)))
-  ([profile-num version-num object-num object-slug num-profiles num-versions num-objects max-iris]
-   (let [num-iris  (rand-int (inc max-iris))
-         num-pairs (->> (repeatedly num-iris (fn [] [(rand-int num-profiles)
+  ([profile-num version-num object-num object-slug num-profiles num-versions num-objects num-iris]
+   (let [num-pairs (->> (repeatedly num-iris (fn [] [(rand-int num-profiles)
                                                      (rand-int num-versions)
                                                      (rand-int num-objects)]))
                         (filter (fn [[pnum vnum onum]]
@@ -65,6 +54,52 @@
                                   onum))
                         num-pairs)]
      (->> iri-coll vec not-empty))))
+
+(defn create-iri-vec
+  "Create a vector of IRIs (with length limited by `max-iris`) of the form
+   ```
+   http://poly.profile/profile-[pnum]/v[vnum]/[object-slug]-[onum]
+   ```
+   where `pnum`, `vnum`, `onum` have min value 0 (inclusive) and max value
+   `num-profiles`, `num-versions`, and `num-objects` (exclusive), respectively.
+   If `profile-num`, `version-num,` and `object-num` are provided, then the
+   IRI that contains all three of these values is never returned, in order to
+   prevent self-loops. If `min-iris` is provided, that provides an (inclusive)
+   minumum number of IRIs in the returned vector."
+  ([object-slug num-profiles num-versions num-objects max-iris]
+   (let [num-iris (rand-int (inc max-iris))]
+     (create-iri-vec* object-slug
+                      num-profiles
+                      num-versions
+                      num-objects
+                      num-iris)))
+  ([profile-num version-num object-num object-slug num-profiles num-versions num-objects max-iris]
+   (let [num-iris (rand-int (inc max-iris))]
+     (create-iri-vec* profile-num
+                      version-num
+                      object-num
+                      object-slug
+                      num-profiles
+                      num-versions
+                      num-objects
+                      num-iris)))
+  ([object-slug num-profiles num-versions num-objects max-iris min-iris]
+   (let [num-iris (+ min-iris (rand-int (- (inc max-iris) min-iris)))]
+     (create-iri-vec* object-slug
+                      num-profiles
+                      num-versions
+                      num-objects
+                      num-iris)))
+  ([profile-num version-num object-num object-slug num-profiles num-versions num-objects max-iris min-iris]
+   (let [num-iris (+ min-iris (rand-int (- (inc max-iris) min-iris)))]
+     (create-iri-vec* profile-num
+                      version-num
+                      object-num
+                      object-slug
+                      num-profiles
+                      num-versions
+                      num-objects
+                      num-iris))))
 
 (defn create-same-version-iri-vec
   "Create a vector of IRIs (with length limited by `max-iris`) of the form
