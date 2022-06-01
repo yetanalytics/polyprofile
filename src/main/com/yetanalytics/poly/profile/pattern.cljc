@@ -60,12 +60,12 @@
    num-vers
    num-templates]
   (assoc pattern-base
-         pattern-kw (first (iri/create-iri-vec "template"
-                                               num-profs
-                                               num-vers
-                                               num-templates
-                                               1
-                                               1))))
+         pattern-kw (first (iri/create-nondistinct-iri-vec "template"
+                                                           num-profs
+                                                           num-vers
+                                                           num-templates
+                                                           1
+                                                           1))))
 
 (defn- init-coll-pattern
   [pattern-base
@@ -75,12 +75,12 @@
    num-templates
    max-iris]
   (assoc pattern-base
-         pattern-kw (iri/create-iri-vec "template"
-                                        num-profs
-                                        num-vers
-                                        num-templates
-                                        max-iris
-                                        2)))
+         pattern-kw (iri/create-nondistinct-iri-vec "template"
+                                                    num-profs
+                                                    num-vers
+                                                    num-templates
+                                                    max-iris
+                                                    2)))
 
 (defn- add-patterns
   "Add a single Pattern DAG to `pattern-coll` by designating a random Pattern
