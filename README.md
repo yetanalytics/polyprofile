@@ -2,6 +2,14 @@
 
 xAPI Profile generation library
 
+## Installation
+
+```clojure
+{com.yetanalytics/polyprofile {:mvn/version "0.1.2"
+                               :exclusions [org.clojure/clojure
+                                            org.clojure/clojurescript]}}
+```
+
 ## API
 
 The API has a single function: `generate-profile-seq`, which takes a single arg map and generates a lazy seq of xAPI Profiles whose IRI properties (e.g. `broader`, `narrower`) are guaranteed to relate to other Profile objects in that seq.
