@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.1.2 - 2022-10-24
+- Update CI and CD to remove deprecation warnings
+
 ## 0.1.1 - 2022-06-01
 - Fix the following potential Pattern-related errors:
   - cyclic patterns
